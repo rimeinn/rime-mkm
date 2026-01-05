@@ -28,7 +28,7 @@ patch_files:
       tag: mungyeong
       layout: dubeolsik
     recognizer/patterns/kagiroi: '^(?:ok|\xE3\x81[\x81-\xBF]|\xE3\x82[\x80-\x9F]|\xE3\x83\xBC)(?:\xE3\x81[\x81-\xBF]|\xE3\x82[\x80-\x9F]|\xE3\x83\xBC|[a-z\-;])*$'
-    recognizer/patterns/mungyeong: '^(?:om|(?:\xEA[\xB0-\xBF]|\xEB[\x80-\xBF]|\xEC[\x80-\xBF]|\xED[\x80-\x9D])[\x80-\xBF]|\xED\x9E[\x80-\xA3]|\xE3\x84[\xB1-\xBF]|\xE3\x85[\x80-\xA3])(?:(?:(?:\xEA[\xB0-\xBF]$
+    recognizer/patterns/mungyeong: '^(?:om|(?:\xEA[\xB0-\xBF]|\xEB[\x80-\xBF]|\xEC[\x80-\xBF]|\xED[\x80-\x9D])[\x80-\xBF]|\xED\x9E[\x80-\xA3]|\xE3\x84[\xB1-\xBF]|\xE3\x85[\x80-\xA3])(?:(?:(?:\xEA[\xB0-\xBF]$'
   kagiroi.schema.yaml:
     engine/processors/@before 1: lua_processor@*mungyeong/mungyeong_hangul_speller
     engine/translators/@before 2: reverse_lookup_translator@moran
