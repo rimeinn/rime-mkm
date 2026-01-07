@@ -34,6 +34,6 @@ patch_files:
     engine/translators/@before 2: reverse_lookup_translator@moran
     engine/translators/@before 3: reverse_lookup_translator@mungyeong
   mungyeong.schema.yaml:
-    engine/processors/@before 3: lua_processor@*kagiroi/kagiroi_kana_speller
+    engine/processors/@before 2: lua_processor@*kagiroi/kagiroi_kana_speller
     engine/translators/@before 2: reverse_lookup_translator@kagiroi
     engine/translators/@before 3: reverse_lookup_translator@moran
