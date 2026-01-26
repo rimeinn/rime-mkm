@@ -2,7 +2,12 @@
 ---
 recipe:
   Rx: mkm
+  description: >-
+    A set of CJK rime input schemas.
 
+install_files: >-
+  lua/mkm/*.lua
+  
 patch_files:
   moran.schema.yaml:
     schema/dependencies/+:
@@ -29,11 +34,19 @@ patch_files:
       layout: dubeolsik
     recognizer/patterns/kagiroi: '^(?:ok|\xE3\x81[\x81-\xBF]|\xE3\x82[\x80-\x9F]|\xE3\x83\xBC)(?:\xE3\x81[\x81-\xBF]|\xE3\x82[\x80-\x9F]|\xE3\x83\xBC|[a-z\-;])*$'
     recognizer/patterns/mungyeong: '^(?:om|(?:\xEA[\xB0-\xBF]|\xEB[\x80-\xBF]|\xEC[\x80-\xBF]|\xED[\x80-\x9D])[\x80-\xBF]|\xED\x9E[\x80-\xA3]|\xE3\x84[\xB1-\xBF]|\xE3\x85[\x80-\xA3])(?:(?:(?:\xEA[\xB0-\xBF]|\xEB[\x80-\xBF]|\xEC[\x80-\xBF]|\xED[\x80-\x9D])[\x80-\xBF]|\xED\x9E[\x80-\xA3]|\xE3\x84[\xB1-\xBF]|\xE3\x85[\x80-\xA3])|[a-zA-Z])*$'
+  kagiroi.yaml:
+    alphabet/3_dan/alphabet: -qwertyuiopasdfghjkl;zxcvbnm`
+    alphabet/3_dan_hira/alphabet: ょぁぃぅぇぉあいうえおかきくけこがぎぐげごさしすせそざじずぜぞたちつてとだぢづでどなにぬねのはひふへほばびぶべぼぱぴぷぺぽまみむめもやゆよらりるれろわゐ𛄟ゑをんゃっゕゖーゅabcdefghijklmnopqrstuvwxyz-;`
   kagiroi.schema.yaml:
     engine/processors/@before 1: lua_processor@*mungyeong/mungyeong_hangul_speller
     engine/translators/@before 2: reverse_lookup_translator@moran
     engine/translators/@before 3: reverse_lookup_translator@mungyeong
+    engine/filters/+:
+      - lua_filter@*mkm/moran_aux_filter
   mungyeong.schema.yaml:
     engine/processors/@before 2: lua_processor@*kagiroi/kagiroi_kana_speller
     engine/translators/@before 2: reverse_lookup_translator@kagiroi
     engine/translators/@before 3: reverse_lookup_translator@moran
+    engine/filters/+:
+      - lua_filter@*mkm/moran_aux_filter
+    recognizer/patterns/mungyeong: '^(?:(?:\xEA[\xB0-\xBF]|\xEB[\x80-\xBF]|\xEC[\x80-\xBF]|\xED[\x80-\x9D])[\x80-\xBF]|\xED\x9E[\x80-\xA3]|\xE3\x84[\xB1-\xBF]|\xE3\x85[\x80-\xA3])(?:(?:(?:\xEA[\xB0-\xBF]|\xEB[\x80-\xBF]|\xEC[\x80-\xBF]|\xED[\x80-\x9D])[\x80-\xBF]|\xED\x9E[\x80-\xA3]|\xE3\x84[\xB1-\xBF]|\xE3\x85[\x80-\xA3])|[a-zA-Z`])*$'

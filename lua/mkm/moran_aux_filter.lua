@@ -1,4 +1,4 @@
--- kagiroi_aux_filter.lua
+-- moran_aux_filter.lua
 -- implement aux filter logic based on moran
 -- license: GPLv3
 -- author: ksqsf
