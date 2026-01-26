@@ -44,7 +44,7 @@ patch_files:
     engine/filters/+:
       - lua_filter@*mkm/moran_aux_filter
     kagiroi/translator/input_mapping:
-      - xform/^([^`]*)n$/$1ん$/
+      - xform/^([^\x60]*)n$/$1ん$/
   mungyeong.schema.yaml:
     engine/processors/@before 2: lua_processor@*kagiroi/kagiroi_kana_speller
     engine/translators/@before 2: reverse_lookup_translator@kagiroi
