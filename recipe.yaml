@@ -41,15 +41,13 @@ patch_files:
     engine/processors/@before 1: lua_processor@*mungyeong/mungyeong_hangul_speller
     engine/translators/@before 2: reverse_lookup_translator@moran
     engine/translators/@before 3: reverse_lookup_translator@mungyeong
-    engine/filters/+:
-      - lua_filter@*mkm/moran_aux_filter
+    engine/filters/@before 1: lua_filter@*mkm/moran_aux_filter
     kagiroi/translator/input_mapping:
       - xform/^([^\x60]*)n$/$1ん$/
   mungyeong.schema.yaml:
     engine/processors/@before 2: lua_processor@*kagiroi/kagiroi_kana_speller
     engine/translators/@before 2: reverse_lookup_translator@kagiroi
     engine/translators/@before 3: reverse_lookup_translator@moran
-    engine/filters/+:
-      - lua_filter@*mkm/moran_aux_filter
+    engine/filters/@before 1: lua_filter@*mkm/moran_aux_filter
     recognizer/patterns/mungyeong: '^(?:(?:\xEA[\xB0-\xBF]|\xEB[\x80-\xBF]|\xEC[\x80-\xBF]|\xED[\x80-\x9D])[\x80-\xBF]|\xED\x9E[\x80-\xA3]|\xE3\x84[\xB1-\xBF]|\xE3\x85[\x80-\xA3])(?:(?:(?:\xEA[\xB0-\xBF]|\xEB[\x80-\xBF]|\xEC[\x80-\xBF]|\xED[\x80-\x9D])[\x80-\xBF]|\xED\x9E[\x80-\xA3]|\xE3\x84[\xB1-\xBF]|\xE3\x85[\x80-\xA3])|[a-zA-Z\x60])*$'
     
