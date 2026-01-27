@@ -11,6 +11,9 @@
 bash rime-install rimeinn/rime-mkm/mkm-packages.conf
 ```
 
+或者在 [Release Page](https://github.com/rimeinn/rime-mkm/releases/tag/nightly) 選擇對應的 ZIP 包下載，解壓至 Rime 用戶目錄重新部署即可
+
+
 ### Customization
 通過環境變量可以指定具體分支（moran 默認 trad， 其他默認 main）：
 
