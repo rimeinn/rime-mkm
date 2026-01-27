@@ -41,7 +41,10 @@ jobs:
       - name: Cleanup & Package
         run: |
           PKG_NAME="mkm-moran@${{ matrix.moran }}-kagiroi@${{ matrix.kagiroi }}-mungyeong@main.zip"
+          DEFAULT_YAML="plum/package/rimeinn/moran/default.yaml"
           echo "Packaging $PKG_NAME ..."
+          sed -i '/- schema: tiger/a \  - schema: kagiroi\n  - schema: mungyeong' "$DEFAULT_YAML"
+          mv "$DEFAULT_YAML" dist/
           cd dist
           zip -r -q ../"$PKG_NAME" ./*
 
@@ -51,9 +54,21 @@ jobs:
           tag_name: nightly
           name: "Nightly Build"
           body: |
-            Automatic build from GitHub Actions.
-            Updated at: ${{ github.event.head_commit.timestamp || 'Scheduled Run' }}
+            頁面提供的打包文件對應不同的 Git 分支組合：
+            
+            ### moran
+            - **trad**: 傳承字版
+            - **simp**: 簡體字版
+            
+            ### kagiroi
+            - **main**: 詞庫以 `dict.yaml` 提供
+            - **build**: 詞庫以二進制提供，無法修改，但可較快完成初次部署
+            
+            ### mungyeong
+            - **main**: 單一版本
+            ---
+            更新時間: ${{ github.event.head_commit.timestamp || 'Scheduled Run' }}
           files: "*.zip"
-          prerelease: true
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
