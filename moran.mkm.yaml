@@ -1,0 +1,25 @@
+patch:
+  schema/dependencies/+:
+    - kagiroi
+    - mungyeong
+  engine/segmentors/@before 6: affix_segmentor@kagiroi
+  engine/processors/@before 3: lua_processor@*kagiroi/kagiroi_kana_speller
+  engine/segmentors/@before 7: affix_segmentor@mungyeong
+  engine/processors/@before 4: lua_processor@*mungyeong/mungyeong_hangul_speller
+  engine/translators/+:
+    - lua_translator@*kagiroi/kagiroi_translator
+    - lua_translator@*mungyeong/mungyeong_translator
+  kagiroi:
+    prefix: ok
+    tips: 〔カギロイ〕
+    tag: kagiroi
+    layout: romaji
+    speller:
+      __include: kagiroi:/alphabet/3_dan
+  mungyeong:
+    prefix: om
+    tips: 〔문경〕
+    tag: mungyeong
+    layout: dubeolsik
+  recognizer/patterns/kagiroi: '^(?:ok|\xE3\x81[\x81-\xBF]|\xE3\x82[\x80-\x9F]|\xE3\x83\xBC)(?:\xE3\x81[\x81-\xBF]|\xE3\x82[\x80-\x9F]|\xE3\x83\xBC|[a-z\-;])*$'
+  recognizer/patterns/mungyeong: '^(?:om|(?:\xEA[\xB0-\xBF]|\xEB[\x80-\xBF]|\xEC[\x80-\xBF]|\xED[\x80-\x9D])[\x80-\xBF]|\xED\x9E[\x80-\xA3]|\xE3\x84[\xB1-\xBF]|\xE3\x85[\x80-\xA3])(?:(?:(?:\xEA[\xB0-\xBF]|\xEB[\x80-\xBF]|\xEC[\x80-\xBF]|\xED[\x80-\x9D])[\x80-\xBF]|\xED\x9E[\x80-\xA3]|\xE3\x84[\xB1-\xBF]|\xE3\x85[\x80-\xA3])|[a-zA-Z])*$'

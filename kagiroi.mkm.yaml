@@ -1,0 +1,7 @@
+patch:
+  engine/processors/@before 1: lua_processor@*mungyeong/mungyeong_hangul_speller
+  engine/translators/@before 2: reverse_lookup_translator@moran
+  engine/translators/@before 3: reverse_lookup_translator@mungyeong
+  engine/filters/@before 1: lua_filter@*mkm/moran_aux_filter
+  kagiroi/translator/input_mapping:
+    - xform/^([^\x60]*)n$/$1ん$/
