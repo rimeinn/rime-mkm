@@ -1,0 +1,59 @@
+name: Nightly Build
+
+on:
+  schedule:
+    - cron: '0 20 * * *'
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build moran@${{ matrix.moran }} kagiroi@${{ matrix.kagiroi }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        moran: [simp, trad]
+        kagiroi: [main, build]
+    steps:
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git zip curl
+
+      - name: Clone Plum
+        run: git clone --depth 1 https://github.com/rime/plum.git
+
+      - name: Run Rime Install
+        env:
+          branch_moran: ${{ matrix.moran }}
+          branch_kagiroi: ${{ matrix.kagiroi }}
+          rime_dir: ${{ github.workspace }}/dist
+        run: |
+          echo "Starting build for moran@$branch_moran | kagiroi@$branch_kagiroi | mungyeong@main"
+          mkdir -p dist
+          bash plum/rime-install rimeinn/rime-mkm/mkm-packages.conf
+
+      - name: Cleanup & Package
+        run: |
+          PKG_NAME="mkm-moran@${{ matrix.moran }}-kagiroi@${{ matrix.kagiroi }}-mungyeong@main.zip"
+          echo "Packaging $PKG_NAME ..."
+          cd dist
+          zip -r -q ../"$PKG_NAME" ./*
+
+      - name: Upload to Nightly Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: nightly
+          name: "Nightly Build"
+          body: |
+            Automatic build from GitHub Actions.
+            Updated at: ${{ github.event.head_commit.timestamp || 'Scheduled Run' }}
+          files: "*.zip"
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
