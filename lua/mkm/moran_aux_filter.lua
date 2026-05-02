@@ -14,8 +14,8 @@ local moran = require("moran")
 ---@return boolean whether this candidate matches the auxcode
 local function candidate_match(aux_table, candidate, auxcode)
     local auxcode = " " .. auxcode
-    for pos, codepoint in utf8.codes(candidate.text) do
-        local auxcodes = " " .. (aux_table[codepoint] or "")
+    for i, char in moran.chars(candidate.text) do
+        local auxcodes = " " .. (aux_table:lookup(char) or "")
         if auxcodes and auxcodes:match(auxcode) then
             return true
         end
@@ -25,14 +25,16 @@ end
 
 ---@param env table
 local function init(env)
-    if moran == nil then
+    env.enabled = true
+    env.aux_table = ReverseLookup("moran_zrmdb")
+    if not moran then
+        log.error("moran_aux_filter: cannot load moran.lua")
         env.enabled = false
     end
-    env.aux_table = moran.load_zrmdb()
-    if env.aux_table then
-        env.enabled = true
+    if not env.aux_table then
+        log.error("moran_aux_filter: cannot load moran_zrmdb.reverse.bin")
+        env.enabled = false
     end
-
 
     local function on_select_post(ctx)
         ctx.input = ctx.input:gsub("`(.*)$", "")
