@@ -1,0 +1,46 @@
+name: MKM integration tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mira:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        moran: [trad, simp]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: rimeinn/rime-moran
+          ref: ${{ matrix.moran }}
+          path: dependencies/moran
+      - uses: actions/checkout@v4
+        with:
+          repository: rimeinn/rime-kagiroi
+          ref: main
+          path: dependencies/kagiroi
+      - uses: actions/checkout@v4
+        with:
+          repository: rimeinn/rime-mungyeong
+          ref: main
+          path: dependencies/mungyeong
+      - name: Set up Mira
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y librime1t64 librime-plugin-lua libyaml-cpp0.8 python3-yaml
+          curl --fail --location --retry 3 https://github.com/rimeinn/mira/releases/download/latest/mira -o "$RUNNER_TEMP/mira"
+          chmod +x "$RUNNER_TEMP/mira"
+      - name: Test the combined schemas with Mira
+        run: |
+          python3 tools/test_mkm.py --mira "$RUNNER_TEMP/mira" \
+            --moran dependencies/moran --kagiroi dependencies/kagiroi \
+            --mungyeong dependencies/mungyeong

@@ -1,0 +1,66 @@
+schema: moran
+source_dir: .
+script: |
+  function eq(a,b) print("actual=" .. tostring(a) .. " expected=" .. tostring(b)); return a == b end
+
+deploy:
+  candidates_on:
+    options:
+      candidates: true
+    patch:
+      mungyeong/auto_space: false
+    tests:
+    - send: omskql{space}
+      assert: eq(commit, "나비") and preedit == nil
+    - send: omgksrnr{space}
+      assert: eq(commit, "한국") and preedit == nil
+    - send: omr{space}
+      assert: eq(commit, "ㄱ") and preedit == nil
+    - send: omrhk{space}
+      assert: eq(commit, "과") and preedit == nil
+    - send: omskql{Left}{Right}{space}
+      assert: eq(commit, "나비") and preedit == nil
+    - send: omskql{BackSpace}{space}
+      assert: eq(commit, "나ㅂ") and preedit == nil
+    - send: omskql{space}omr
+      assert: eq(commit, "나비") and eq(preedit, "ㄱ")
+  candidates_off:
+    options:
+      candidates: false
+    patch:
+      mungyeong/auto_space: false
+    tests:
+    - send: omskql{space}
+      assert: eq(commit, "나비") and preedit == nil
+    - send: omgksrnr{space}
+      assert: eq(commit, "한국") and preedit == nil
+    - send: omr{space}
+      assert: eq(commit, "ㄱ") and preedit == nil
+    - send: omrhk{space}
+      assert: eq(commit, "과") and preedit == nil
+    - send: omskql{Left}{Right}{space}
+      assert: eq(commit, "나비") and preedit == nil
+    - send: omskql{BackSpace}{space}
+      assert: eq(commit, "나ㅂ") and preedit == nil
+    - send: omskql{space}omr
+      assert: eq(commit, "나비") and eq(preedit, "ㄱ")
+  auto_space:
+    options:
+      candidates: true
+    patch:
+      mungyeong/auto_space: true
+    tests:
+    - send: omskql{space}
+      assert: eq(commit, "나비 ") and preedit == nil
+    - send: omgksrnr{space}
+      assert: eq(commit, "한국 ") and preedit == nil
+    - send: omr{space}
+      assert: eq(commit, "ㄱ ") and preedit == nil
+    - send: omrhk{space}
+      assert: eq(commit, "과 ") and preedit == nil
+    - send: omskql{Left}{Right}{space}
+      assert: eq(commit, "나비 ") and preedit == nil
+    - send: omskql{BackSpace}{space}
+      assert: eq(commit, "나ㅂ ") and preedit == nil
+    - send: omskql{space}omr
+      assert: eq(commit, "나비 ") and eq(preedit, "ㄱ")

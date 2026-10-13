@@ -44,19 +44,25 @@ def main():
             update(document)
             path.write_text(yaml.safe_dump(document, allow_unicode=True, sort_keys=False))
 
-        for schema in ("moran", "kagiroi", "mungyeong"):
-            patch_file(schema + ".schema.yaml", lambda doc, s=schema:
-                       doc.update({"__patch": [s + ".mkm:/patch", s + ".custom:/patch?"]}))
+        # Consume the same patches as Plum; keep optional user patches last.
+        recipe = yaml.safe_load((root / "recipe.yaml").read_text())
+        for name, patch in recipe["patch_files"].items():
+            def apply_recipe_patch(doc, patch=patch):
+                if isinstance(patch, list):
+                    doc["__patch"] = patch
+                else:
+                    for key, value in patch.items():
+                        parent = doc
+                        parts = key.split("/")
+                        for part in parts[:-1]:
+                            parent = parent.setdefault(part, {})
+                        parent[parts[-1]] = value
+            patch_file(name, apply_recipe_patch)
 
-        def patch_alphabet(doc):
-            for layout in ("3_dan", "3_dan_hira"):
-                doc["alphabet"][layout]["alphabet"] += "`"
-
-        patch_file("kagiroi.yaml", patch_alphabet)
         patch_file("default.yaml", lambda doc: doc.update({"schema_list": [
             {"schema": name} for name in ("moran", "kagiroi", "mungyeong")
         ]}))
-        suites = [root / "tests/mkm.test.yaml",
+        suites = [*sorted((root / "tests").glob("*.test.yaml")),
                   args.kagiroi / "tests/kagiroi.test.yaml",
                   args.mungyeong / "tests/mungyeong.test.yaml"]
         failed = False

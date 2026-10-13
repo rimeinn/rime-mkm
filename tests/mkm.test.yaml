@@ -1,4 +1,3 @@
-# Run through tools/test_mkm.py with the three dependency checkouts.
 schema: moran
 source_dir: .
 script: function eq(a,b) print('actual=' .. tostring(a) .. ' expected=' .. tostring(b));
@@ -122,8 +121,6 @@ deploy:
       assert: eq(preedit, nil)
     - send: okkana{BackSpace}
       assert: eq(preedit, "か")
-    - send: okkana{BackSpace}
-      assert: eq(preedit, "か")
     - send: okkana{BackSpace}{BackSpace}
       assert: eq(preedit, "ok〔カギロイ〕")
     - send: okkana{BackSpace}ki
@@ -132,6 +129,14 @@ deploy:
       assert: eq(preedit, "o")
     - send: oka{BackSpace}{BackSpace}{BackSpace}
       assert: eq(preedit, nil)
+    - send: okana
+      assert: eq(preedit, "あな") and cand[1].text == "穴"
+    - send: okana{space}
+      assert: eq(commit, "穴") and preedit == nil
+    - send: okana{Escape}{Escape}omgks
+      assert: eq(preedit, "한")
+    - send: omgks{Escape}{Escape}okana
+      assert: eq(preedit, "あな")
   romaja:
     patch:
       mungyeong/layout: romaja

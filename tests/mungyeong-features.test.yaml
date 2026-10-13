@@ -1,0 +1,56 @@
+schema: mungyeong
+source_dir: .
+script: |
+  function has(candidates, text)
+    for _, candidate in ipairs(candidates) do
+      if candidate.text == text then return true end
+    end
+    return false
+  end
+  function eq(actual, expected)
+    print("actual=" .. tostring(actual) .. " expected=" .. tostring(expected))
+    return actual == expected
+  end
+
+deploy:
+  default:
+    options:
+      ascii_mode: false
+      candidates: true
+    tests:
+    - send: Cyi
+      assert: has(cand, "一")
+    - send: Cyi{space}
+      assert: eq(commit, "一") and preedit == nil
+    - send: Cyi{BackSpace}
+      assert: eq(preedit, "y〔魔然〕")
+    - send: Jsann
+      assert: eq(preedit, "さん〔カギロイ〕") and has(cand, "山")
+    - send: Jsann{space}
+      assert: eq(commit, "三") and preedit == nil
+    - send: Jkana{BackSpace}
+      assert: eq(preedit, "か〔カギロイ〕")
+    - send: tks
+      assert: has(cand, "山") and has(cand, "産")
+    - send: tks`
+      assert: has(cand, "山") and has(cand, "産")
+    - send: tks`a
+      assert: has(cand, "山") and not has(cand, "産")
+    - send: tks`aa
+      assert: 'eq(preedit, "산`aa") and #cand == 1 and has(cand, "山")'
+    - send: tks`zz
+      assert: '#cand == 0'
+    - send: tks`aa{BackSpace}
+      assert: eq(preedit, "산`a") and has(cand, "山")
+    - send: tks`aa{BackSpace}{BackSpace}{BackSpace}
+      assert: eq(preedit, "산") and has(cand, "産")
+    - send: tks`aa1
+      assert: eq(commit, "山") and preedit == nil
+    - send: tks`aa{space}
+      assert: eq(commit, "山 ") and preedit == nil
+    - send: tks`aa1r
+      assert: eq(commit, "山") and eq(preedit, "ㄱ")
+    - send: gksrnr`wu
+      assert: has(cand, "韓國")
+    - send: gksrnr`kh
+      assert: has(cand, "韓國")

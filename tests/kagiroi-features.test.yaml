@@ -1,0 +1,60 @@
+schema: kagiroi
+source_dir: .
+script: |
+  function has(candidates, text)
+    for _, candidate in ipairs(candidates) do
+      if candidate.text == text then return true end
+    end
+    return false
+  end
+  function eq(actual, expected)
+    print("actual=" .. tostring(actual) .. " expected=" .. tostring(expected))
+    return actual == expected
+  end
+
+deploy:
+  default:
+    options:
+      ascii_mode: false
+      candidates: true
+    tests:
+    - send: Cyi
+      assert: has(cand, "一")
+    - send: Cyi{space}
+      assert: eq(commit, "一") and preedit == nil
+    - send: Cyi{BackSpace}
+      assert: eq(preedit, "y〔魔然〕")
+    - send: Ktks
+      assert: eq(preedit, "산〔문경〕") and has(cand, "山")
+    - send: Ktks1
+      assert: eq(commit, "山") and preedit == nil
+    - send: Ktks{BackSpace}
+      assert: eq(preedit, "사〔문경〕")
+    - send: san
+      assert: eq(preedit, "さn") and has(cand, "さん")
+    - send: kann
+      assert: has(cand, "感")
+    - send: kann`dh
+      assert: eq(preedit, "かん`dh") and has(cand, "漢") and not has(cand, "感")
+    - send: kann`d
+      assert: has(cand, "漢") and not has(cand, "感")
+    - send: sann`
+      assert: has(cand, "山")
+    - send: sann`zz
+      assert: '#cand == 0'
+    - send: sann`aa
+      assert: has(cand, "山")
+    - send: sann`aa{BackSpace}
+      assert: eq(preedit, "さん`a") and has(cand, "山")
+    - send: sann`aa{BackSpace}{BackSpace}{BackSpace}
+      assert: eq(preedit, "さん") and has(cand, "産")
+    - send: kann`dh1
+      assert: eq(commit, "漢") and preedit == nil
+    - send: kann`dh{space}
+      assert: eq(commit, "漢") and preedit == nil
+    - send: kann`dh1kana
+      assert: eq(commit, "漢") and eq(preedit, "かな")
+    - send: nihonn`ma
+      assert: has(cand, "日本")
+    - send: nihonn`ma1
+      assert: eq(commit, "日本") and preedit == nil
